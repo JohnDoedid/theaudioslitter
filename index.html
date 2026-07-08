@@ -7,39 +7,37 @@
     <title>the audio slitter</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: #000; color: #fff; font-family: 'Inter', sans-serif;
-            display: flex; justify-content: center; align-items: flex-start;
-            min-height: 100vh; padding: 28px 16px;
-        }
-        .container { width: 100%; max-width: 720px; display: flex; flex-direction: column; align-items: center; gap: 22px; }
-        h1 { font-weight: 600; font-size: 1.5rem; letter-spacing: -0.02em; text-shadow: 0 0 16px rgba(255,255,255,0.12); margin: 0; }
-        .canvas-wrap { width: 100%; position: relative; }
-        canvas { width: 100%; height: 160px; display: block; border: 1px solid #222; border-radius: 2px; }
-        .controls { width: 100%; display: flex; flex-direction: column; gap: 12px; }
-        .row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
-        label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; min-width: 70px; color: #ccc; }
-        input[type="range"] { -webkit-appearance: none; flex: 1; min-width: 70px; height: 4px; background: #333; border-radius: 2px; outline: none; cursor: pointer; }
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: #fff; border-radius: 50%; box-shadow: 0 0 6px rgba(255,255,255,0.5); }
-        .number-input { width: 70px; background: #111; border: 1px solid #555; color: #fff; padding: 4px 6px; font-family: inherit; font-size: 0.7rem; text-align: right; border-radius: 4px; outline: none; }
-        .number-input:focus { border-color: #fff; box-shadow: 0 0 6px rgba(255,255,255,0.3); }
-        .stepper-btn { background: #1a1a1a; border: 1px solid #444; color: #ccc; font-family: inherit; font-size: 0.7rem; padding: 2px 6px; cursor: pointer; border-radius: 3px; line-height: 1; transition: all 0.15s; min-width: 26px; text-align: center; }
-        .stepper-btn:hover { background: #333; border-color: #fff; color: #fff; }
-        .value { font-size: 0.65rem; color: #aaa; min-width: 50px; text-align: right; white-space: nowrap; }
-        .checkbox-group { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
-        .checkbox-group label { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.68rem; color: #ccc; letter-spacing: 0.04em; min-width: auto; }
-        .checkbox-group input[type="checkbox"] { accent-color: #ff4444; width: 15px; height: 15px; cursor: pointer; }
-        button, .btn { background: #111; border: 1px solid #fff; color: #fff; padding: 7px 14px; font-family: inherit; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em; border-radius: 20px; cursor: pointer; transition: all 0.2s; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
-        button:hover, .btn:hover { background: #fff; color: #000; box-shadow: 0 0 14px rgba(255,255,255,0.25); }
-        button.red { border-color: #ff4444; color: #ff4444; }
-        button.red:hover { background: #ff4444; color: #000; box-shadow: 0 0 18px rgba(255,68,68,0.5); }
-        .mode-btns { display: flex; gap: 6px; flex-wrap: wrap; }
-        .mode-btns .btn { padding: 4px 10px; font-size: 0.6rem; }
-        .mode-btns .btn.active { background: #fff; color: #000; border-color: #fff; }
-        .file-input { display: none; }
-        .record-icon { width: 10px; height: 10px; border-radius: 50%; background: #ff4444; display: inline-block; box-shadow: 0 0 8px #ff4444; }
-        .info { font-size: 0.6rem; color: #555; text-align: center; }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:#000;color:#fff;font-family:'Inter',sans-serif;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:28px 16px}
+        .container{width:100%;max-width:720px;display:flex;flex-direction:column;align-items:center;gap:22px}
+        h1{font-weight:600;font-size:1.5rem;letter-spacing:-0.02em;text-shadow:0 0 16px rgba(255,255,255,0.12);margin:0}
+        .canvas-wrap{width:100%;position:relative}
+        canvas{width:100%;height:160px;display:block;border:1px solid #222;border-radius:2px}
+        .time-cursor{position:absolute;top:0;bottom:0;width:1px;background:rgba(255,255,255,0.8);pointer-events:none;transition:left 0.05s linear}
+        .time-cursor.hidden{display:none}
+        .controls{width:100%;display:flex;flex-direction:column;gap:12px}
+        .row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}
+        label{font-size:0.7rem;font-weight:600;letter-spacing:0.04em;min-width:70px;color:#ccc}
+        input[type="range"]{-webkit-appearance:none;flex:1;min-width:70px;height:4px;background:#333;border-radius:2px;outline:none;cursor:pointer}
+        input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;background:#fff;border-radius:50%;box-shadow:0 0 6px rgba(255,255,255,0.5)}
+        .number-input{width:70px;background:#111;border:1px solid #555;color:#fff;padding:4px 6px;font-family:inherit;font-size:0.7rem;text-align:right;border-radius:4px;outline:none}
+        .number-input:focus{border-color:#fff;box-shadow:0 0 6px rgba(255,255,255,0.3)}
+        .stepper-btn{background:#1a1a1a;border:1px solid #444;color:#ccc;font-family:inherit;font-size:0.7rem;padding:2px 6px;cursor:pointer;border-radius:3px;line-height:1;transition:all 0.15s;min-width:26px;text-align:center}
+        .stepper-btn:hover{background:#333;border-color:#fff;color:#fff}
+        .value{font-size:0.65rem;color:#aaa;min-width:50px;text-align:right;white-space:nowrap}
+        .checkbox-group{display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+        .checkbox-group label{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.68rem;color:#ccc;letter-spacing:0.04em;min-width:auto}
+        .checkbox-group input[type="checkbox"]{accent-color:#ff4444;width:15px;height:15px;cursor:pointer}
+        button,.btn{background:#111;border:1px solid #fff;color:#fff;padding:7px 14px;font-family:inherit;font-size:0.7rem;font-weight:600;letter-spacing:0.05em;border-radius:20px;cursor:pointer;transition:all 0.2s;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+        button:hover,.btn:hover{background:#fff;color:#000;box-shadow:0 0 14px rgba(255,255,255,0.25)}
+        button.red{border-color:#ff4444;color:#ff4444}
+        button.red:hover{background:#ff4444;color:#000;box-shadow:0 0 18px rgba(255,68,68,0.5)}
+        .mode-btns{display:flex;gap:6px;flex-wrap:wrap}
+        .mode-btns .btn{padding:4px 10px;font-size:0.6rem}
+        .mode-btns .btn.active{background:#fff;color:#000;border-color:#fff}
+        .file-input{display:none}
+        .record-icon{width:10px;height:10px;border-radius:50%;background:#ff4444;display:inline-block;box-shadow:0 0 8px #ff4444}
+        .info{font-size:0.6rem;color:#555;text-align:center}
     </style>
 </head>
 <body>
@@ -47,6 +45,7 @@
         <h1>the audio slitter</h1>
         <div class="canvas-wrap">
             <canvas id="visCanvas" width="720" height="160"></canvas>
+            <div id="timeCursor" class="time-cursor hidden"></div>
         </div>
         <div class="controls">
             <div class="row">
@@ -58,6 +57,7 @@
                 <button class="stepper-btn delay-coarse-dec">«</button>
                 <button class="stepper-btn delay-coarse-inc">»</button>
                 <span class="value" id="delayVal">200 ms</span>
+                <input type="number" class="number-input" id="delayMaxNum" value="5000" step="1" min="0.02" max="5000" style="width:60px" title="max delay">
             </div>
             <div class="row">
                 <label>buffer</label>
@@ -115,22 +115,22 @@
                 <label><input type="checkbox" id="aecCheck"> AEC</label>
                 <label><input type="checkbox" id="ecCheck"> EC</label>
                 <label><input type="checkbox" id="nsCheck"> NS</label>
-                <div style="display:flex;align-items:center;gap:4px;font-size:0.65rem;">
+                <div style="display:flex;align-items:center;gap:4px;font-size:0.65rem">
                     <span>NS thresh</span>
-                    <input type="range" id="nsThreshSlider" min="0" max="100" value="15" style="width:70px;">
+                    <input type="range" id="nsThreshSlider" min="0" max="100" value="15" style="width:70px">
                     <span class="value" id="nsThreshVal">15%</span>
                 </div>
                 <label><input type="checkbox" id="rgbaDistortCheck"> RGBA distort</label>
-                <div style="display:flex;align-items:center;gap:4px;font-size:0.65rem;">
+                <div style="display:flex;align-items:center;gap:4px;font-size:0.65rem">
                     <span>RGBA amt</span>
-                    <input type="range" id="rgbaDistortSlider" min="0" max="100" value="30" style="width:70px;">
+                    <input type="range" id="rgbaDistortSlider" min="0" max="100" value="30" style="width:70px">
                     <span class="value" id="rgbaDistortVal">30%</span>
                 </div>
             </div>
             <div class="row">
                 <label>zoom</label>
                 <input type="range" id="zoomSlider" min="0.05" max="10000" value="200" step="0.1">
-                <input type="number" class="number-input" id="zoomNum" value="200" step="1" min="0.05" max="10000">
+                <input type="number" class="number-input" id="zoomNum" value="200" step="0.1" min="0.05" max="10000">
                 <button class="stepper-btn zoom-fine-dec">‹</button>
                 <button class="stepper-btn zoom-fine-inc">›</button>
                 <button class="stepper-btn zoom-coarse-dec">«</button>
@@ -145,7 +145,39 @@
                 <button class="stepper-btn pts-fine-inc">›</button>
                 <span class="value" id="ptsDeltaVal">0.020</span>
             </div>
-            <div class="row" id="barsRow" style="display:none;">
+            <div class="row">
+                <label>glow</label>
+                <input type="range" id="glowSlider" min="0" max="30" value="4" step="0.5">
+                <input type="number" class="number-input" id="glowNum" value="4" step="0.5" min="0" max="30">
+                <button class="stepper-btn glow-fine-dec">‹</button>
+                <button class="stepper-btn glow-fine-inc">›</button>
+                <span class="value" id="glowVal">4</span>
+            </div>
+            <div class="row">
+                <label>line</label>
+                <input type="range" id="lineWidthSlider" min="0.5" max="5" value="1.5" step="0.1">
+                <input type="number" class="number-input" id="lineWidthNum" value="1.5" step="0.1" min="0.5" max="5">
+                <button class="stepper-btn lineWidth-fine-dec">‹</button>
+                <button class="stepper-btn lineWidth-fine-inc">›</button>
+                <span class="value" id="lineWidthVal">1.5</span>
+            </div>
+            <div class="row">
+                <label>persist</label>
+                <input type="range" id="persistSlider" min="0" max="100" value="0" step="1">
+                <input type="number" class="number-input" id="persistNum" value="0" step="1" min="0" max="100">
+                <button class="stepper-btn persist-fine-dec">‹</button>
+                <button class="stepper-btn persist-fine-inc">›</button>
+                <span class="value" id="persistVal">0%</span>
+            </div>
+            <div class="row">
+                <label>xy scale</label>
+                <input type="range" id="xyScaleSlider" min="0.1" max="2" value="0.8" step="0.01">
+                <input type="number" class="number-input" id="xyScaleNum" value="0.8" step="0.01" min="0.1" max="2">
+                <button class="stepper-btn xyScale-fine-dec">‹</button>
+                <button class="stepper-btn xyScale-fine-inc">›</button>
+                <span class="value" id="xyScaleVal">0.80</span>
+            </div>
+            <div class="row" id="barsRow" style="display:none">
                 <label>bars</label>
                 <input type="range" id="barsSlider" min="4" max="128" value="32" step="1">
                 <input type="number" class="number-input" id="barsNum" value="32" step="1" min="4" max="128">
@@ -153,19 +185,22 @@
                 <button class="stepper-btn bars-fine-inc">›</button>
                 <span class="value" id="barsVal">32</span>
             </div>
-            <div class="row" style="justify-content:space-between;">
-                <span style="font-size:0.65rem;color:#aaa;">mode</span>
-                <div class="mode-btns" id="modeBtns">
+            <div class="row" style="justify-content:space-between">
+                <span style="font-size:0.65rem;color:#aaa">scope</span>
+                <div class="mode-btns" id="scopeModeBtns">
                     <button class="btn active" data-mode="wave">wave</button>
                     <button class="btn" data-mode="points">points</button>
-                    <button class="btn" data-mode="bars">bars</button>
+                    <button class="btn" data-mode="oscillo">oscillo</button>
+                    <button class="btn" data-mode="peaks">peaks</button>
+                    <button class="btn" data-mode="dollchan">dollchan</button>
                     <button class="btn" data-mode="diagram">diagram</button>
-                    <button class="btn" data-mode="combined">comb.</button>
+                    <button class="btn" data-mode="bars">bars</button>
                     <button class="btn" data-mode="fft">FFT</button>
+                    <button class="btn" data-mode="xy">XY</button>
                 </div>
-                <label style="min-width:auto;margin-left:10px;"><input type="checkbox" id="stereoVisCheck"> stereo vis</label>
+                <label style="min-width:auto;margin-left:10px"><input type="checkbox" id="stereoVisCheck"> stereo vis</label>
             </div>
-            <div class="row" style="justify-content:center;gap:10px;">
+            <div class="row" style="justify-content:center;gap:10px">
                 <button id="startBtn" class="red">▶ start</button>
                 <button id="sweepBtn">sweep tone</button>
                 <button id="micBtn">mic</button>
@@ -179,12 +214,13 @@
 
     <script>
         (() => {
-            // DOM refs...
             const visCanvas = document.getElementById('visCanvas');
             const ctx = visCanvas.getContext('2d');
+            const timeCursor = document.getElementById('timeCursor');
             const delaySlider = document.getElementById('delaySlider');
             const delayNum = document.getElementById('delayNum');
             const delayVal = document.getElementById('delayVal');
+            const delayMaxNum = document.getElementById('delayMaxNum');
             const bufferSlider = document.getElementById('bufferSlider');
             const bufferNum = document.getElementById('bufferNum');
             const bufferVal = document.getElementById('bufferVal');
@@ -209,6 +245,18 @@
             const ptsDeltaSlider = document.getElementById('ptsDeltaSlider');
             const ptsDeltaNum = document.getElementById('ptsDeltaNum');
             const ptsDeltaVal = document.getElementById('ptsDeltaVal');
+            const glowSlider = document.getElementById('glowSlider');
+            const glowNum = document.getElementById('glowNum');
+            const glowVal = document.getElementById('glowVal');
+            const lineWidthSlider = document.getElementById('lineWidthSlider');
+            const lineWidthNum = document.getElementById('lineWidthNum');
+            const lineWidthVal = document.getElementById('lineWidthVal');
+            const persistSlider = document.getElementById('persistSlider');
+            const persistNum = document.getElementById('persistNum');
+            const persistVal = document.getElementById('persistVal');
+            const xyScaleSlider = document.getElementById('xyScaleSlider');
+            const xyScaleNum = document.getElementById('xyScaleNum');
+            const xyScaleVal = document.getElementById('xyScaleVal');
             const barsSlider = document.getElementById('barsSlider');
             const barsNum = document.getElementById('barsNum');
             const barsVal = document.getElementById('barsVal');
@@ -228,7 +276,7 @@
             const fileBtn = document.getElementById('fileBtn');
             const fileInput = document.getElementById('fileInput');
             const recordBtn = document.getElementById('recordBtn');
-            const modeBtns = document.getElementById('modeBtns');
+            const scopeModeBtns = document.getElementById('scopeModeBtns');
 
             let audioCtx = null;
             let sourceNode = null;
@@ -241,12 +289,14 @@
             const MAX_BUFFER_SEC = 12;
             let visSampleRate = 44100;
             let visBufferL = null, visBufferR = null;
-            let visWriteIdx = 0, bufferCapacity = 0;
+            let bufferCapacity = 0;
+            let totalWrittenSamples = 0;
             let recording = false, recordedChunks = [];
             let delayMs = 200, bufferMs = 50;
             let divisorValParam = 1, multiplierValParam = 1.0;
             let bitDepth = 32, smoothPct = 0, simplifyPct = 0;
             let zoomMs = 200, ptsDelta = 0.02;
+            let glow = 4, lineWidth = 1.5, persist = 0, xyScale = 0.8;
             let nsThreshPct = 15, aecOn = false, ecOn = false, nsOn = false;
             let rgbaDistortOn = false, rgbaDistortAmt = 30;
             let stereoVis = false;
@@ -428,14 +478,12 @@
             async function loadWorklet() {
                 if (workletLoaded) return true;
                 if (!audioCtx) return false;
-                try {
-                    const blob = new Blob([workletCode], { type: 'application/javascript' });
-                    const url = URL.createObjectURL(blob);
-                    await audioCtx.audioWorklet.addModule(url);
-                    URL.revokeObjectURL(url);
-                    workletLoaded = true;
-                    return true;
-                } catch (e) { console.error(e); return false; }
+                const blob = new Blob([workletCode], { type: 'application/javascript' });
+                const url = URL.createObjectURL(blob);
+                await audioCtx.audioWorklet.addModule(url);
+                URL.revokeObjectURL(url);
+                workletLoaded = true;
+                return true;
             }
 
             async function setupGraph() {
@@ -465,17 +513,18 @@
                 bufferCapacity = Math.ceil(visSampleRate * MAX_BUFFER_SEC);
                 visBufferL = new Float32Array(bufferCapacity);
                 visBufferR = new Float32Array(bufferCapacity);
-                visWriteIdx = 0;
+                totalWrittenSamples = 0;
 
                 workletNode.port.onmessage = (event) => {
                     if (event.data.type === 'audioData') {
                         const chunk = event.data.buffer;
+                        const startWrite = totalWrittenSamples % bufferCapacity;
                         for (let i = 0; i < chunk.length; i += 2) {
-                            const idx = (visWriteIdx + i/2) % bufferCapacity;
+                            const idx = (startWrite + i/2) % bufferCapacity;
                             visBufferL[idx] = chunk[i];
                             visBufferR[idx] = chunk[i+1];
                         }
-                        visWriteIdx += chunk.length / 2;
+                        totalWrittenSamples += chunk.length / 2;
                         if (recording) recordedChunks.push(new Float32Array(chunk));
                     }
                 };
@@ -505,7 +554,6 @@
                 if (!workletNode) return;
                 if (sourceNode) { try { sourceNode.disconnect(); } catch(e) {} }
                 sourceNode = node;
-                // Simply connect to worklet (stereo input is accepted)
                 node.connect(workletNode);
             }
 
@@ -613,21 +661,28 @@
 
             function draw() {
                 const w = visCanvas.width, h = visCanvas.height;
-                ctx.clearRect(0, 0, w, h);
-                if (!isPlaying || visWriteIdx === 0) {
+                if (persist > 0) {
+                    ctx.fillStyle = `rgba(0,0,0,${persist/100})`;
+                    ctx.fillRect(0,0,w,h);
+                } else {
+                    ctx.clearRect(0,0,w,h);
+                }
+                if (totalWrittenSamples === 0) {
                     ctx.fillStyle = '#222'; ctx.font = '11px Inter, sans-serif'; ctx.textAlign = 'center';
                     ctx.fillText('start audio to see waveform', w/2, h/2);
+                    timeCursor.classList.add('hidden');
                     return;
                 }
 
                 if (displayMode === 'diagram') {
-                    if (visWriteIdx < h) return;
+                    timeCursor.classList.add('hidden');
+                    if (totalWrittenSamples < h) return;
                     const imageData = ctx.getImageData(1, 0, w-1, h);
                     ctx.putImageData(imageData, 0, 0);
                     const colData = ctx.createImageData(1, h);
-                    const startIdx = (visWriteIdx - h + bufferCapacity) % bufferCapacity;
+                    const recentIdx = (totalWrittenSamples - 1) % bufferCapacity;
                     for (let y = 0; y < h; y++) {
-                        const sample = visBufferL[(startIdx + y) % bufferCapacity];
+                        const sample = visBufferL[(recentIdx - h + 1 + y + bufferCapacity) % bufferCapacity];
                         const brightness = Math.floor(Math.max(0, Math.min(255, (sample * 0.5 + 0.5) * 255)));
                         const idx = (h - 1 - y) * 4;
                         colData.data[idx] = brightness;
@@ -640,6 +695,7 @@
                 }
 
                 if (displayMode === 'fft') {
+                    timeCursor.classList.add('hidden');
                     if (!analyserL) return;
                     const freqL = new Uint8Array(analyserL.frequencyBinCount);
                     analyserL.getByteFrequencyData(freqL);
@@ -659,79 +715,185 @@
                     return;
                 }
 
+                if (displayMode === 'bars') {
+                    timeCursor.classList.add('hidden');
+                    if (!analyserL) return;
+                    const freq = new Uint8Array(analyserL.frequencyBinCount);
+                    analyserL.getByteFrequencyData(freq);
+                    const barCount = Math.min(barsCount, freq.length);
+                    const barW = w / barCount;
+                    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+                    for (let i = 0; i < barCount; i++) {
+                        const mag = freq[Math.floor(i * freq.length / barCount)] / 255;
+                        ctx.fillRect(i * barW, h - mag * h * 0.7, barW - 1, mag * h * 0.7);
+                    }
+                    return;
+                }
+
                 const windowSamples = Math.round(zoomMs / 1000 * visSampleRate);
-                const totalAvail = Math.min(visWriteIdx, bufferCapacity);
-                const startIdx = Math.max(0, visWriteIdx - windowSamples) % bufferCapacity;
+                const totalAvail = Math.min(totalWrittenSamples, bufferCapacity);
                 const samplesToDraw = Math.min(windowSamples, totalAvail);
-                const dataL = [], dataR = [];
-                for (let i = 0; i < samplesToDraw; i++) {
-                    const idx = (startIdx + i) % bufferCapacity;
-                    dataL.push(visBufferL[idx]);
-                    dataR.push(visBufferR[idx]);
-                }
-                if (dataL.length < 2) return;
-                const stepX = w / (dataL.length - 1);
+                if (samplesToDraw < 2) { timeCursor.classList.add('hidden'); return; }
+                const startOffset = totalWrittenSamples - samplesToDraw;
+                const step = (samplesToDraw - 1) / (w - 1);
                 const midH = h / 2;
+                const colorL = '#fff';
+                const colorR = '#0ff';
+                ctx.lineWidth = lineWidth;
+                ctx.shadowBlur = glow;
 
-                if (displayMode === 'bars' || displayMode === 'combined') {
-                    if (analyserL) {
-                        const freq = new Uint8Array(analyserL.frequencyBinCount);
-                        analyserL.getByteFrequencyData(freq);
-                        const barCount = Math.min(barsCount, freq.length);
-                        const barW = w / barCount;
-                        ctx.fillStyle = 'rgba(255,255,255,0.3)';
-                        for (let i = 0; i < barCount; i++) {
-                            const mag = freq[Math.floor(i * freq.length / barCount)] / 255;
-                            ctx.fillRect(i * barW, h - mag*h*0.7, barW-1, mag*h*0.7);
+                function getSample(ch, i) {
+                    const idx = (startOffset + i) % bufferCapacity;
+                    return ch === 0 ? visBufferL[idx] : visBufferR[idx];
+                }
+
+                if (displayMode === 'xy') {
+                    timeCursor.classList.add('hidden');
+                    const scale = Math.min(w, h) * 0.5 * xyScale;
+                    const cx = w/2, cy = h/2;
+                    ctx.strokeStyle = colorL;
+                    ctx.beginPath();
+                    let first = true;
+                    for (let i = 0; i < samplesToDraw; i++) {
+                        const l = getSample(0, i), r = getSample(1, i);
+                        const x = cx + l * scale;
+                        const y = cy - r * scale;
+                        if (first) { ctx.moveTo(x, y); first = false; }
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.stroke();
+                    if (stereoVis) {
+                        ctx.strokeStyle = colorR;
+                        ctx.beginPath();
+                        first = true;
+                        for (let i = 0; i < samplesToDraw; i++) {
+                            const l = getSample(0, i), r = getSample(1, i);
+                            const x = cx + r * scale;
+                            const y = cy - l * scale;
+                            if (first) { ctx.moveTo(x, y); first = false; }
+                            else ctx.lineTo(x, y);
+                        }
+                        ctx.stroke();
+                    }
+                    ctx.shadowBlur = 0;
+                    return;
+                }
+
+                function drawWaveform(ch, col) {
+                    ctx.strokeStyle = col;
+                    ctx.beginPath();
+                    for (let px = 0; px < w; px++) {
+                        const idx = Math.floor(px * step);
+                        const val = getSample(ch, idx);
+                        const y = midH - val * (midH * 0.9);
+                        px === 0 ? ctx.moveTo(px, y) : ctx.lineTo(px, y);
+                    }
+                    ctx.stroke();
+                }
+
+                function drawPoints(ch, col) {
+                    ctx.fillStyle = col;
+                    let lastVal = null;
+                    for (let px = 0; px < w; px++) {
+                        const idx = Math.floor(px * step);
+                        const val = getSample(ch, idx);
+                        if (lastVal === null || Math.abs(val - lastVal) > ptsDelta) {
+                            const y = midH - val * (midH * 0.9);
+                            ctx.fillRect(px-1, y-1, 2, 2);
+                            lastVal = val;
                         }
                     }
                 }
 
-                const drawChannel = (data, color) => {
-                    if (displayMode === 'wave' || displayMode === 'combined') {
-                        ctx.strokeStyle = color; ctx.lineWidth = 1.5;
-                        ctx.shadowColor = color; ctx.shadowBlur = 4;
+                function drawOscillo(ch, col) {
+                    ctx.strokeStyle = col;
+                    for (let px = 0; px < w; px++) {
+                        const startIdx = Math.floor(px * step);
+                        const endIdx = Math.floor((px + 1) * step);
+                        let min = 1, max = -1;
+                        for (let i = startIdx; i <= endIdx; i++) {
+                            const val = getSample(ch, i);
+                            if (val < min) min = val;
+                            if (val > max) max = val;
+                        }
+                        const y1 = midH - min * (midH * 0.9);
+                        const y2 = midH - max * (midH * 0.9);
                         ctx.beginPath();
-                        for (let i = 0; i < data.length; i++) {
-                            const y = midH - data[i] * (midH * 0.9);
-                            const px = i * stepX;
-                            i === 0 ? ctx.moveTo(px, y) : ctx.lineTo(px, y);
-                        }
-                        ctx.stroke(); ctx.shadowBlur = 0;
+                        ctx.moveTo(px, y1);
+                        ctx.lineTo(px, y2);
+                        ctx.stroke();
                     }
-                    if (displayMode === 'points' || displayMode === 'combined') {
-                        ctx.fillStyle = color;
-                        let lastVal = null;
-                        for (let i = 0; i < data.length; i++) {
-                            const y = midH - data[i] * (midH * 0.9);
-                            const px = i * stepX;
-                            if (lastVal === null || Math.abs(data[i] - lastVal) > ptsDelta) {
-                                ctx.fillRect(px-1, y-1, 2, 2);
-                                lastVal = data[i];
-                            }
-                        }
-                    }
-                };
+                }
 
-                if (stereoVis) {
-                    drawChannel(dataL, '#fff');
-                    drawChannel(dataR, '#0ff');
+                function drawPeaks(ch, col) {
+                    ctx.fillStyle = col;
+                    for (let px = 0; px < w; px++) {
+                        const startIdx = Math.floor(px * step);
+                        const endIdx = Math.floor((px + 1) * step);
+                        let max = -1;
+                        for (let i = startIdx; i <= endIdx; i++) {
+                            const val = getSample(ch, i);
+                            if (val > max) max = val;
+                        }
+                        const y = midH - max * (midH * 0.9);
+                        ctx.fillRect(px-1, y-1, 2, 2);
+                    }
+                }
+
+                function drawDollchan(ch, col) {
+                    ctx.fillStyle = col;
+                    ctx.globalAlpha = 0.3;
+                    ctx.beginPath();
+                    for (let px = 0; px < w; px++) {
+                        const idx = Math.floor(px * step);
+                        const val = getSample(ch, idx);
+                        const y = midH - val * (midH * 0.9);
+                        px === 0 ? ctx.moveTo(px, y) : ctx.lineTo(px, y);
+                    }
+                    ctx.lineTo(w-1, h);
+                    ctx.lineTo(0, h);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.globalAlpha = 1;
+                    ctx.strokeStyle = col;
+                    ctx.stroke();
+                }
+
+                switch (displayMode) {
+                    case 'wave': drawWaveform(0, colorL); if (stereoVis) drawWaveform(1, colorR); break;
+                    case 'points': drawPoints(0, colorL); if (stereoVis) drawPoints(1, colorR); break;
+                    case 'oscillo': drawOscillo(0, colorL); if (stereoVis) drawOscillo(1, colorR); break;
+                    case 'peaks': drawPeaks(0, colorL); if (stereoVis) drawPeaks(1, colorR); break;
+                    case 'dollchan': drawDollchan(0, colorL); if (stereoVis) drawDollchan(1, colorR); break;
+                }
+                ctx.shadowBlur = 0;
+                if (displayMode !== 'diagram' && displayMode !== 'bars' && displayMode !== 'fft' && displayMode !== 'xy') {
+                    timeCursor.classList.remove('hidden');
+                    timeCursor.style.left = '100%';
                 } else {
-                    drawChannel(dataL, '#fff');
+                    timeCursor.classList.add('hidden');
                 }
             }
 
             function animLoop() { draw(); requestAnimationFrame(animLoop); }
 
-            function bindControl(slider, numInput, valueSpan, getVal, setVal, fineStep=1, coarseStep=10, formatVal=v=>v+'') {
+            function bindControl(slider, numInput, valueSpan, getVal, setValRaw, fineStep=1, coarseStep=10, formatVal=v=>v+'') {
+                numInput.step = slider.step;
+                numInput.min = slider.min;
+                numInput.max = slider.max;
+                const clamp = (v) => Math.min(parseFloat(slider.max), Math.max(parseFloat(slider.min), v));
+                const setVal = (v) => { v = clamp(v); setValRaw(v); };
                 slider.addEventListener('input', () => setVal(parseFloat(slider.value)));
-                numInput.addEventListener('input', () => { let v = parseFloat(numInput.value); if (!isNaN(v)) setVal(v); });
+                numInput.addEventListener('input', () => {
+                    let v = parseFloat(numInput.value);
+                    if (!isNaN(v)) setVal(v);
+                });
                 numInput.addEventListener('change', () => {
                     let v = parseFloat(numInput.value);
                     if (isNaN(v)) v = parseFloat(slider.min);
-                    setVal(Math.min(parseFloat(slider.max), Math.max(parseFloat(slider.min), v)));
+                    setVal(v);
                 });
-                const inc = (factor) => setVal(Math.min(parseFloat(slider.max), Math.max(parseFloat(slider.min), getVal()+factor)));
+                const inc = (factor) => setVal(getVal() + factor);
                 const fineDec = document.querySelector(`.${slider.id.replace('Slider','')}-fine-dec`);
                 const fineInc = document.querySelector(`.${slider.id.replace('Slider','')}-fine-inc`);
                 const coarseDec = document.querySelector(`.${slider.id.replace('Slider','')}-coarse-dec`);
@@ -740,7 +902,12 @@
                 if (fineInc) fineInc.addEventListener('click', ()=>inc(fineStep));
                 if (coarseDec) coarseDec.addEventListener('click', ()=>inc(-coarseStep));
                 if (coarseInc) coarseInc.addEventListener('click', ()=>inc(coarseStep));
-                return function refresh() { const v = getVal(); slider.value = v; numInput.value = v; valueSpan.textContent = formatVal(v); };
+                return function refresh() {
+                    const v = getVal();
+                    slider.value = v;
+                    numInput.value = v;
+                    valueSpan.textContent = formatVal(v);
+                };
             }
 
             const refreshDelay = bindControl(delaySlider, delayNum, delayVal, ()=>delayMs, v=>{ delayMs=v; if(bufferMs>=delayMs){ bufferMs=Math.max(0.02,delayMs-0.01); refreshBuffer(); } bufferSlider.max=delayMs-0.01; bufferNum.max=delayMs-0.01; refreshAll(); }, 0.1,10, v=>v.toFixed(1)+' ms');
@@ -752,12 +919,42 @@
             const refreshSimplify = bindControl(simplifySlider, simplifyNum, simplifyVal, ()=>simplifyPct, v=>{ simplifyPct=Math.round(v); refreshAll(); }, 1,10, v=>v+'%');
             const refreshZoom = bindControl(zoomSlider, zoomNum, zoomVal, ()=>zoomMs, v=>{ zoomMs=v; }, 0.1,100, v=>v.toFixed(1)+' ms');
             const refreshPtsDelta = bindControl(ptsDeltaSlider, ptsDeltaNum, ptsDeltaVal, ()=>ptsDelta, v=>{ ptsDelta=v; }, 0.001,0.01, v=>v.toFixed(3));
+            const refreshGlow = bindControl(glowSlider, glowNum, glowVal, ()=>glow, v=>{ glow=Math.round(v*10)/10; }, 0.5,2, v=>v.toFixed(1));
+            const refreshLineWidth = bindControl(lineWidthSlider, lineWidthNum, lineWidthVal, ()=>lineWidth, v=>{ lineWidth=Math.round(v*10)/10; }, 0.1,0.5, v=>v.toFixed(1));
+            const refreshPersist = bindControl(persistSlider, persistNum, persistVal, ()=>persist, v=>{ persist=Math.round(v); }, 1,5, v=>v+'%');
+            const refreshXyScale = bindControl(xyScaleSlider, xyScaleNum, xyScaleVal, ()=>xyScale, v=>{ xyScale=Math.round(v*100)/100; }, 0.01,0.1, v=>v.toFixed(2));
             const refreshBars = bindControl(barsSlider, barsNum, barsVal, ()=>barsCount, v=>{ barsCount=Math.round(v); }, 1,8, v=>v);
+
+            function updateDelayMax() {
+                let newMax = parseFloat(delayMaxNum.value);
+                if (isNaN(newMax)) newMax = 5000;
+                newMax = Math.max(0.02, Math.min(5000, newMax));
+                delayMaxNum.value = newMax;
+                delaySlider.max = newMax;
+                delayNum.max = newMax;
+                if (delayMs > newMax) { delayMs = newMax; refreshDelay(); }
+                bufferSlider.max = newMax - 0.01;
+                bufferNum.max = newMax - 0.01;
+                if (bufferMs >= newMax) { bufferMs = Math.max(0.02, newMax - 0.01); refreshBuffer(); }
+                refreshAll();
+            }
+            delayMaxNum.addEventListener('change', updateDelayMax);
+            delayMaxNum.addEventListener('input', () => {
+                let v = parseFloat(delayMaxNum.value);
+                if (!isNaN(v)) {
+                    v = Math.max(0.02, Math.min(5000, v));
+                    delaySlider.max = v;
+                    delayNum.max = v;
+                    bufferSlider.max = v - 0.01;
+                    bufferNum.max = v - 0.01;
+                }
+            });
 
             function refreshAll() {
                 updateAllParams();
                 refreshDelay(); refreshBuffer(); refreshDivisor(); refreshMultiplier();
-                refreshBit(); refreshSmooth(); refreshSimplify(); refreshZoom(); refreshPtsDelta(); refreshBars();
+                refreshBit(); refreshSmooth(); refreshSimplify(); refreshZoom(); refreshPtsDelta();
+                refreshGlow(); refreshLineWidth(); refreshPersist(); refreshXyScale(); refreshBars();
             }
 
             nsThreshSlider.addEventListener('input', ()=>{ nsThreshPct=parseInt(nsThreshSlider.value); nsThreshVal.textContent=nsThreshPct+'%'; updateAllParams(); });
@@ -768,12 +965,12 @@
             rgbaDistortCheck.addEventListener('change', ()=>{ rgbaDistortOn=rgbaDistortCheck.checked; updateAllParams(); });
             stereoVisCheck.addEventListener('change', ()=>{ stereoVis=stereoVisCheck.checked; });
 
-            modeBtns.querySelectorAll('.btn').forEach(btn => {
+            scopeModeBtns.querySelectorAll('.btn').forEach(btn => {
                 btn.addEventListener('click', ()=>{
-                    modeBtns.querySelectorAll('.btn').forEach(b=>b.classList.remove('active'));
+                    scopeModeBtns.querySelectorAll('.btn').forEach(b=>b.classList.remove('active'));
                     btn.classList.add('active');
                     displayMode = btn.dataset.mode;
-                    barsRow.style.display = (displayMode==='bars'||displayMode==='combined') ? 'flex' : 'none';
+                    barsRow.style.display = (displayMode==='bars') ? 'flex' : 'none';
                 });
             });
             barsRow.style.display='none';
@@ -799,8 +996,7 @@
             });
 
             function initUI() {
-                bufferSlider.max = delayMs - 0.01;
-                bufferNum.max = delayMs - 0.01;
+                updateDelayMax();
                 refreshAll();
                 animLoop();
             }
